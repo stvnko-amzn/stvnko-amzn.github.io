@@ -1,20 +1,18 @@
 import React, { useState, useCallback } from 'react';
-import { User, Message, ConversationContext, VisualizationData } from './types';
+import { User, Message, ConversationContext, VisualizationData, PinnedVisualization } from './types';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { ChatInterface } from './components/chat/ChatInterface';
-import { NetworkMap } from './components/visualizations/NetworkMap';
-import { ShipmentTimeline } from './components/visualizations/ShipmentTimeline';
-import { ComplianceDashboard } from './components/visualizations/ComplianceDashboard';
-import { TrailerYardView } from './components/visualizations/TrailerYardView';
+import { PinnedVisualizationPanel } from './components/visualizations/PinnedVisualizationPanel';
 import { queryProcessor } from './services/queryProcessor';
-import { LogOut, Settings, User as UserIcon } from 'lucide-react';
+import { LogOut, User as UserIcon } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [context, setContext] = useState<ConversationContext>({});
-  const [currentVisualization, setCurrentVisualization] = useState<VisualizationData | null>(null);
+  const [pinnedVisualizations, setPinnedVisualizations] = useState<PinnedVisualization[]>([]);
+  const [activeVisualizationTab, setActiveVisualizationTab] = useState<string | null>(null);
 
   const handleLogin = useCallback((loggedInUser: User) => {
     setUser(loggedInUser);
@@ -24,11 +22,16 @@ function App() {
     setUser(null);
     setMessages([]);
     setContext({});
-    setCurrentVisualization(null);
+    setPinnedVisualizations([]);
+    setActiveVisualizationTab(null);
   }, []);
 
   const generateMessageId = () => {
     return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  const generatePinnedId = () => {
+    return `pinned-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
   const handleSendMessage = useCallback(async (messageContent: string) => {
@@ -60,11 +63,6 @@ function App() {
         queryProcessor.setContext(newContext);
       }
 
-      // Update visualization if provided
-      if (response.visualization) {
-        setCurrentVisualization(response.visualization);
-      }
-
       // Add assistant response
       const assistantMessage: Message = {
         id: generateMessageId(),
@@ -76,6 +74,26 @@ function App() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      // Auto-pin new visualizations
+      if (response.visualization) {
+        const pinnedVisualization: PinnedVisualization = {
+          id: generatePinnedId(),
+          title: response.visualization.title,
+          data: response.visualization,
+          messageId: assistantMessage.id,
+          timestamp: new Date()
+        };
+
+        setPinnedVisualizations(prev => {
+          // Limit to 5 pinned visualizations, remove oldest if needed
+          const updated = [...prev, pinnedVisualization];
+          return updated.length > 5 ? updated.slice(1) : updated;
+        });
+
+        // Set as active tab
+        setActiveVisualizationTab(pinnedVisualization.id);
+      }
 
     } catch (error) {
       console.error('Error processing query:', error);
@@ -94,44 +112,73 @@ function App() {
     }
   }, [user, context]);
 
-  const renderVisualization = (vizData: VisualizationData) => {
-    switch (vizData.type) {
-      case 'network-map':
-        return (
-          <NetworkMap
-            trailers={vizData.data}
-            title={vizData.title}
-            description={vizData.description}
-          />
-        );
-      case 'timeline':
-        return (
-          <ShipmentTimeline
-            events={vizData.data}
-            title={vizData.title}
-            description={vizData.description}
-          />
-        );
-      case 'compliance-dashboard':
-        return (
-          <ComplianceDashboard
-            vendorData={vizData.data}
-            title={vizData.title}
-            description={vizData.description}
-          />
-        );
-      case 'trailer-yard':
-        return (
-          <TrailerYardView
-            trailers={vizData.data}
-            title={vizData.title}
-            description={vizData.description}
-          />
-        );
-      default:
-        return null;
+  const handlePinVisualization = useCallback((messageId: string, visualization: VisualizationData) => {
+    const pinnedVisualization: PinnedVisualization = {
+      id: generatePinnedId(),
+      title: visualization.title,
+      data: visualization,
+      messageId,
+      timestamp: new Date()
+    };
+
+    setPinnedVisualizations(prev => {
+      // Check if already pinned
+      if (prev.some(p => p.messageId === messageId)) return prev;
+      
+      // Limit to 5 pinned visualizations
+      const updated = [...prev, pinnedVisualization];
+      return updated.length > 5 ? updated.slice(1) : updated;
+    });
+
+    // Set as active tab
+    setActiveVisualizationTab(pinnedVisualization.id);
+  }, []);
+
+  const handleUnpinVisualization = useCallback((messageId: string) => {
+    setPinnedVisualizations(prev => {
+      const updated = prev.filter(p => p.messageId !== messageId);
+      
+      // If the unpinned visualization was active, switch to overview
+      const unpinnedVisualization = prev.find(p => p.messageId === messageId);
+      if (unpinnedVisualization && activeVisualizationTab === unpinnedVisualization.id) {
+        setActiveVisualizationTab(null);
+      }
+      
+      return updated;
+    });
+  }, [activeVisualizationTab]);
+
+  const handleViewVisualization = useCallback((messageId: string, visualization: VisualizationData) => {
+    // Find existing pinned visualization or create new one
+    const existingPinned = pinnedVisualizations.find(p => p.messageId === messageId);
+    
+    if (existingPinned) {
+      setActiveVisualizationTab(existingPinned.id);
+    } else {
+      // Auto-pin and view
+      handlePinVisualization(messageId, visualization);
     }
-  };
+  }, [pinnedVisualizations, handlePinVisualization]);
+
+  const handleTabSelect = useCallback((tabId: string | null) => {
+    setActiveVisualizationTab(tabId);
+  }, []);
+
+  const handleTabClose = useCallback((tabId: string) => {
+    setPinnedVisualizations(prev => {
+      const updated = prev.filter(p => p.id !== tabId);
+      
+      // If the closed tab was active, switch to overview
+      if (activeVisualizationTab === tabId) {
+        setActiveVisualizationTab(null);
+      }
+      
+      return updated;
+    });
+  }, [activeVisualizationTab]);
+
+  // Get set of pinned message IDs for the chat interface
+  const pinnedMessageIds = new Set(pinnedVisualizations.map(p => p.messageId));
 
   if (!user) {
     return <LoginScreen onLogin={handleLogin} />;
@@ -172,36 +219,32 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content - Two Panel Layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
+        {/* Chat Panel */}
+        <div className="w-3/5 flex flex-col border-r border-gray-200">
           <ChatInterface
             user={user}
             messages={messages}
             isTyping={isTyping}
             context={context}
+            pinnedMessageIds={pinnedMessageIds}
             onSendMessage={handleSendMessage}
+            onPinVisualization={handlePinVisualization}
+            onUnpinVisualization={handleUnpinVisualization}
+            onViewVisualization={handleViewVisualization}
           />
         </div>
 
         {/* Visualization Panel */}
-        {currentVisualization && (
-          <div className="w-1/2 border-l border-gray-200 bg-white overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Visualization</h2>
-                <button
-                  onClick={() => setCurrentVisualization(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
-              </div>
-              {renderVisualization(currentVisualization)}
-            </div>
-          </div>
-        )}
+        <div className="w-2/5 flex flex-col">
+          <PinnedVisualizationPanel
+            pinnedVisualizations={pinnedVisualizations}
+            activeTabId={activeVisualizationTab}
+            onTabSelect={handleTabSelect}
+            onTabClose={handleTabClose}
+          />
+        </div>
       </div>
 
       {/* Footer */}

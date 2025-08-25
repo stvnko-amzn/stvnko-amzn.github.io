@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Message, User, ConversationContext } from '../../types';
+import { Message, User, ConversationContext, VisualizationData } from '../../types';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { QuerySuggestions } from './QuerySuggestions';
@@ -10,7 +10,11 @@ interface ChatInterfaceProps {
   messages: Message[];
   isTyping: boolean;
   context: ConversationContext;
+  pinnedMessageIds: Set<string>;
   onSendMessage: (message: string) => void;
+  onPinVisualization: (messageId: string, visualization: VisualizationData) => void;
+  onUnpinVisualization: (messageId: string) => void;
+  onViewVisualization: (messageId: string, visualization: VisualizationData) => void;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -18,7 +22,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   messages,
   isTyping,
   context,
-  onSendMessage
+  pinnedMessageIds,
+  onSendMessage,
+  onPinVisualization,
+  onUnpinVisualization,
+  onViewVisualization
 }) => {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -94,7 +102,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         ) : (
           <>
             {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
+              <MessageBubble 
+                key={message.id} 
+                message={message}
+                isPinned={pinnedMessageIds.has(message.id)}
+                onPinVisualization={onPinVisualization}
+                onUnpinVisualization={onUnpinVisualization}
+                onViewVisualization={onViewVisualization}
+              />
             ))}
             {isTyping && <TypingIndicator />}
           </>

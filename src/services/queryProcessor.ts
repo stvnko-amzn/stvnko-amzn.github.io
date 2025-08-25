@@ -1,5 +1,5 @@
 import { QueryResponse, ConversationContext, VisualizationData, UserRole } from '../types';
-import { mockTrailers, mockVendorPerformance, mockInventoryData, mockCapacityData, mockInventoryRisk } from '../data/mockData';
+import { mockTrailers, mockVendorPerformance, mockInventoryData, mockCapacityData, mockInventoryRisk, mockLogisticsDashboardData } from '../data/mockData';
 import { generateMockTimeline } from '../components/visualizations/ShipmentTimeline';
 
 export class QueryProcessor {
@@ -64,6 +64,12 @@ export class QueryProcessor {
 
     if (normalizedQuery.includes('which shipments are experiencing delays')) {
       return this.handleDelayedShipmentsQuery();
+    }
+
+    // Dashboard queries
+    if (normalizedQuery.includes('dashboard') || normalizedQuery.includes('overview') || 
+        normalizedQuery.includes('show me the logistics dashboard')) {
+      return this.handleLogisticsDashboardQuery();
     }
 
     // Legacy pattern matching for broader queries
@@ -711,6 +717,38 @@ ${delayedTrailers.map(trailer =>
         'Show me customer impact for these delays',
         'Which delays can be recovered?',
         'Escalate critical shipments to operations team'
+      ]
+    };
+  }
+
+  private async handleLogisticsDashboardQuery(): Promise<QueryResponse> {
+    const visualization: VisualizationData = {
+      type: 'logistics-dashboard',
+      data: mockLogisticsDashboardData,
+      title: 'Logistics Operations Dashboard',
+      description: 'Comprehensive overview of shipment metrics, activity trends, and operational status'
+    };
+
+    return {
+      message: `Here's your comprehensive logistics dashboard overview:
+
+**Key Metrics Summary:**
+• Total Shipments: ${mockLogisticsDashboardData.metrics.totalShipments.value} (${mockLogisticsDashboardData.metrics.totalShipments.trend.direction === 'up' ? '↗️' : '↘️'} ${mockLogisticsDashboardData.metrics.totalShipments.trend.percentage}% ${mockLogisticsDashboardData.metrics.totalShipments.trend.period})
+• Completed: ${mockLogisticsDashboardData.metrics.completed.value} shipments
+• Pending: ${mockLogisticsDashboardData.metrics.pending.value} shipments  
+• Delayed: ${mockLogisticsDashboardData.metrics.delayed.value} shipments
+
+**Current Status:**
+• ${mockLogisticsDashboardData.trailerStatus.byStatus['en-route']} trailers en route
+• ${mockLogisticsDashboardData.trailerStatus.byStatus.arrived} trailers arrived
+• ${mockLogisticsDashboardData.trailerStatus.byStatus.delayed} trailers delayed
+
+The dashboard shows shipment activity trends over the last 12 weeks and recent shipment details. Use this overview to monitor operational performance and identify areas requiring attention.`,
+      visualization,
+      suggestedFollowUps: [
+        'Show me details about delayed shipments',
+        'Which trailers need priority unloading?',
+        'What\'s causing the recent delays?'
       ]
     };
   }

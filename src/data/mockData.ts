@@ -300,12 +300,122 @@ export const mockInventoryRisk = [
   }
 ];
 
+// Mock Logistics Dashboard Data
+export const mockLogisticsDashboardData = {
+  metrics: {
+    totalShipments: { 
+      value: 534, 
+      trend: { direction: 'up' as const, percentage: 12, period: 'vs last month' } 
+    },
+    completed: { 
+      value: 109, 
+      trend: { direction: 'down' as const, percentage: 21, period: 'vs last month' } 
+    },
+    pending: { 
+      value: 293, 
+      trend: { direction: 'up' as const, percentage: 26, period: 'vs last month' } 
+    },
+    delayed: { 
+      value: 23, 
+      trend: { direction: 'down' as const, percentage: 10, period: 'vs last month' } 
+    }
+  },
+  shipments: [
+    {
+      id: 'SH001',
+      customerName: 'Wade Warren',
+      shippingId: '#6275',
+      date: '2024-08-08',
+      location: '65 S.William NY',
+      status: 'complete' as const
+    },
+    {
+      id: 'SH002',
+      customerName: 'Brooklyn Simmons',
+      shippingId: '#6012',
+      date: '2024-08-10',
+      location: '27 Park Street, CAL',
+      status: 'pending' as const
+    },
+    {
+      id: 'SH003',
+      customerName: 'Savannah Nguyen',
+      shippingId: '#1074',
+      date: '2024-08-12',
+      location: '42 Green Road, NY',
+      status: 'complete' as const
+    },
+    {
+      id: 'SH004',
+      customerName: 'Darlene Robertson',
+      shippingId: '#7356',
+      date: '2024-08-13',
+      location: '21 Riverside, OH',
+      status: 'pending' as const
+    },
+    {
+      id: 'SH005',
+      customerName: 'Darrell Steward',
+      shippingId: '#0164',
+      date: '2024-08-20',
+      location: '70 Green Road, CH',
+      status: 'complete' as const
+    }
+  ],
+  activityData: [
+    { date: '2024-06-01', value: 12, label: 'June 1: 12 shipments' },
+    { date: '2024-06-02', value: 8, label: 'June 2: 8 shipments' },
+    { date: '2024-06-03', value: 15, label: 'June 3: 15 shipments' },
+    { date: '2024-06-04', value: 22, label: 'June 4: 22 shipments' },
+    { date: '2024-06-05', value: 18, label: 'June 5: 18 shipments' },
+    { date: '2024-06-08', value: 25, label: 'June 8: 25 shipments' },
+    { date: '2024-06-09', value: 30, label: 'June 9: 30 shipments' },
+    { date: '2024-06-10', value: 28, label: 'June 10: 28 shipments' },
+    { date: '2024-06-11', value: 20, label: 'June 11: 20 shipments' },
+    { date: '2024-06-12', value: 16, label: 'June 12: 16 shipments' },
+    { date: '2024-06-15', value: 35, label: 'June 15: 35 shipments' },
+    { date: '2024-06-16', value: 40, label: 'June 16: 40 shipments' },
+    { date: '2024-06-17', value: 32, label: 'June 17: 32 shipments' },
+    { date: '2024-06-18', value: 28, label: 'June 18: 28 shipments' },
+    { date: '2024-06-19', value: 24, label: 'June 19: 24 shipments' },
+    { date: '2024-06-22', value: 45, label: 'June 22: 45 shipments' },
+    { date: '2024-06-23', value: 38, label: 'June 23: 38 shipments' },
+    { date: '2024-06-24', value: 42, label: 'June 24: 42 shipments' },
+    { date: '2024-06-25', value: 36, label: 'June 25: 36 shipments' },
+    { date: '2024-06-26', value: 30, label: 'June 26: 30 shipments' },
+    { date: '2024-07-01', value: 50, label: 'July 1: 50 shipments' },
+    { date: '2024-07-02', value: 48, label: 'July 2: 48 shipments' },
+    { date: '2024-07-03', value: 52, label: 'July 3: 52 shipments' },
+    { date: '2024-07-08', value: 55, label: 'July 8: 55 shipments' },
+    { date: '2024-07-09', value: 60, label: 'July 9: 60 shipments' },
+    { date: '2024-07-10', value: 58, label: 'July 10: 58 shipments' },
+    { date: '2024-07-15', value: 65, label: 'July 15: 65 shipments' },
+    { date: '2024-07-16', value: 62, label: 'July 16: 62 shipments' },
+    { date: '2024-07-22', value: 70, label: 'July 22: 70 shipments' },
+    { date: '2024-07-23', value: 68, label: 'July 23: 68 shipments' },
+    { date: '2024-08-01', value: 75, label: 'August 1: 75 shipments' },
+    { date: '2024-08-05', value: 80, label: 'August 5: 80 shipments' },
+    { date: '2024-08-06', value: 78, label: 'August 6: 78 shipments' },
+    { date: '2024-08-07', value: 82, label: 'August 7: 82 shipments' }
+  ],
+  trailerStatus: {
+    total: 5,
+    byStatus: {
+      'en-route': 2,
+      'arrived': 1,
+      'unloading': 0,
+      'delayed': 2
+    }
+  }
+};
+
 // Sample queries for different user roles
 export const sampleQueries = {
   'site-leader': [
     'Show me all trailers heading to FC SEA4 in the next 72 hours',
     'Which trailers in the yard need priority unloading?',
-    'What\'s the current capacity utilization at FC LAX7?'
+    'What\'s the current capacity utilization at FC LAX7?',
+    'Show me the logistics dashboard'
   ],
   'retail-employee': [
     'Track ASIN B07X2RJ3L9 across all open POs',

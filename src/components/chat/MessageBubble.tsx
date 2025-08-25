@@ -1,13 +1,24 @@
 import React from 'react';
-import { Message } from '../../types';
+import { Message, VisualizationData } from '../../types';
 import { format } from 'date-fns';
 import { User, Bot } from 'lucide-react';
+import { VisualizationCard } from '../visualizations/VisualizationCard';
 
 interface MessageBubbleProps {
   message: Message;
+  isPinned?: boolean;
+  onPinVisualization?: (messageId: string, visualization: VisualizationData) => void;
+  onUnpinVisualization?: (messageId: string) => void;
+  onViewVisualization?: (messageId: string, visualization: VisualizationData) => void;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = ({ 
+  message, 
+  isPinned = false,
+  onPinVisualization,
+  onUnpinVisualization,
+  onViewVisualization
+}) => {
   const isUser = message.sender === 'user';
   const isError = message.type === 'error';
 
@@ -49,6 +60,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             <div className="mt-2 p-2 bg-red-100 border border-red-200 rounded text-sm text-red-700">
               ⚠️ This query couldn't be processed. Please try rephrasing or contact support.
             </div>
+          )}
+
+          {/* Visualization Card */}
+          {message.visualizationData && !isUser && onPinVisualization && onUnpinVisualization && onViewVisualization && (
+            <VisualizationCard
+              visualization={message.visualizationData}
+              messageId={message.id}
+              isPinned={isPinned}
+              onPin={onPinVisualization}
+              onUnpin={onUnpinVisualization}
+              onView={onViewVisualization}
+            />
           )}
         </div>
       </div>

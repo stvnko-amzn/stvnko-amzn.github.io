@@ -27,7 +27,7 @@ export interface ConversationContext {
 }
 
 export interface VisualizationData {
-  type: 'network-map' | 'timeline' | 'compliance-dashboard' | 'trailer-yard';
+  type: 'network-map' | 'timeline' | 'compliance-dashboard' | 'trailer-yard' | 'logistics-dashboard';
   data: any;
   title: string;
   description?: string;
@@ -104,6 +104,14 @@ export interface VendorPerformance {
     week: string;
     compliance: number;
   }[];
+}
+
+export interface PinnedVisualization {
+  id: string;
+  title: string;
+  data: VisualizationData;
+  messageId: string;
+  timestamp: Date;
 }
 
 export interface QueryResponse {
