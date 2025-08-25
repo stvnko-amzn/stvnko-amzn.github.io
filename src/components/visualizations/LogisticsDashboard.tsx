@@ -2,7 +2,7 @@ import React from 'react';
 import { MetricCard } from './components/MetricCard';
 import { StatusBadge } from './components/StatusBadge';
 import { HeatmapCalendar } from './components/HeatmapCalendar';
-import { Truck, Package, Clock, AlertTriangle, MapPin, Users } from 'lucide-react';
+import { Truck, Package, AlertTriangle, MapPin, Users } from 'lucide-react';
 
 interface LogisticsDashboardProps {
   data: {

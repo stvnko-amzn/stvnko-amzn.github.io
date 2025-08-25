@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { User, Message, ConversationContext, VisualizationData, PinnedVisualization } from './types';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { ChatInterface } from './components/chat/ChatInterface';
