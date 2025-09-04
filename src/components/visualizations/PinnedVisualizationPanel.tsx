@@ -7,19 +7,25 @@ import { ShipmentTimeline } from './ShipmentTimeline';
 import { ComplianceDashboard } from './ComplianceDashboard';
 import { TrailerYardView } from './TrailerYardView';
 import { LogisticsDashboard } from './LogisticsDashboard';
+import MilestoneTimeline from './MilestoneTimeline';
+import FCInboundDashboard from './FCInboundDashboard';
+import VendorTrending from './VendorTrending';
+import RealTimeLocation from './RealTimeLocation';
 
 interface PinnedVisualizationPanelProps {
   pinnedVisualizations: PinnedVisualization[];
   activeTabId: string | null;
   onTabSelect: (tabId: string | null) => void;
   onTabClose: (tabId: string) => void;
+  onActionClick?: (actionId: string, data?: any) => void;
 }
 
 export const PinnedVisualizationPanel: React.FC<PinnedVisualizationPanelProps> = ({
   pinnedVisualizations,
   activeTabId,
   onTabSelect,
-  onTabClose
+  onTabClose,
+  onActionClick
 }) => {
   const renderVisualization = (vizData: VisualizationData) => {
     switch (vizData.type) {
@@ -61,6 +67,35 @@ export const PinnedVisualizationPanel: React.FC<PinnedVisualizationPanelProps> =
             data={vizData.data}
             title={vizData.title}
             description={vizData.description}
+          />
+        );
+      case 'milestone-timeline':
+        return (
+          <MilestoneTimeline
+            milestones={vizData.data.milestones}
+            shipmentId={vizData.data.shipmentId}
+            onActionClick={onActionClick}
+          />
+        );
+      case 'fc-inbound-dashboard':
+        return (
+          <FCInboundDashboard
+            data={vizData.data}
+            onActionClick={onActionClick}
+          />
+        );
+      case 'vendor-trending':
+        return (
+          <VendorTrending
+            data={vizData.data}
+            onActionClick={onActionClick}
+          />
+        );
+      case 'real-time-location':
+        return (
+          <RealTimeLocation
+            data={vizData.data}
+            onActionClick={onActionClick}
           />
         );
       default:
