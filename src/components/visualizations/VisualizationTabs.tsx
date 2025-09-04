@@ -1,6 +1,6 @@
 import React from 'react';
 import { PinnedVisualization } from '../../types';
-import { X, BarChart3, Map, Clock, TrendingUp, Truck } from 'lucide-react';
+import { X, BarChart3, Map, Clock, TrendingUp, Truck, MapPin, Building, Users, Navigation } from 'lucide-react';
 
 interface VisualizationTabsProps {
   pinnedVisualizations: PinnedVisualization[];
@@ -21,6 +21,14 @@ const getVisualizationIcon = (type: string) => {
       return Truck;
     case 'logistics-dashboard':
       return TrendingUp;
+    case 'milestone-timeline':
+      return MapPin;
+    case 'fc-inbound-dashboard':
+      return Building;
+    case 'vendor-trending':
+      return Users;
+    case 'real-time-location':
+      return Navigation;
     default:
       return BarChart3;
   }

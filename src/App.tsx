@@ -177,6 +177,110 @@ function App() {
     });
   }, [activeVisualizationTab]);
 
+  const handleInteractiveAction = useCallback(async (actionId: string, data?: any) => {
+    console.log('Interactive action triggered:', actionId, data);
+    
+    // Handle different action types
+    switch (actionId) {
+      case 'update-eta':
+        // Simulate ETA update
+        const newMessage: Message = {
+          id: generateMessageId(),
+          content: `ETA updated for shipment ${data?.shipmentId || 'unknown'}. New estimated arrival time has been calculated based on current conditions.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, newMessage]);
+        break;
+        
+      case 'escalate-delay':
+        // Simulate delay escalation
+        const escalationMessage: Message = {
+          id: generateMessageId(),
+          content: `Delay escalation initiated for ${data?.shipmentId ? `shipment ${data.shipmentId}` : 'selected items'}. Operations team has been notified and will investigate the issue.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, escalationMessage]);
+        break;
+        
+      case 'optimize-yard':
+        // Simulate yard optimization
+        const optimizationMessage: Message = {
+          id: generateMessageId(),
+          content: `Yard optimization initiated for FC ${data?.fcId || 'selected facility'}. Trailer positions are being reorganized for optimal efficiency.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, optimizationMessage]);
+        break;
+        
+      case 'refresh-data':
+      case 'refresh-locations':
+        // Simulate data refresh
+        const refreshMessage: Message = {
+          id: generateMessageId(),
+          content: 'Data refreshed successfully. All visualizations have been updated with the latest information.',
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, refreshMessage]);
+        break;
+        
+      case 'export-report':
+        // Simulate report export
+        const exportMessage: Message = {
+          id: generateMessageId(),
+          content: `Report exported successfully for ${data?.vendorId ? `vendor ${data.vendorId}` : 'selected data'}. The report has been saved and can be accessed from your downloads.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, exportMessage]);
+        break;
+        
+      case 'schedule-review':
+        // Simulate review scheduling
+        const reviewMessage: Message = {
+          id: generateMessageId(),
+          content: `Performance review scheduled for ${data?.vendorId ? `vendor ${data.vendorId}` : 'selected vendor'}. Meeting invitation will be sent to relevant stakeholders.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, reviewMessage]);
+        break;
+        
+      case 'optimize-routes':
+        // Simulate route optimization
+        const routeMessage: Message = {
+          id: generateMessageId(),
+          content: `Route optimization initiated for ${data?.trailerCount || 'all'} active trailers. New optimal routes are being calculated based on current traffic conditions.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, routeMessage]);
+        break;
+        
+      default:
+        // Generic action handler
+        const genericMessage: Message = {
+          id: generateMessageId(),
+          content: `Action "${actionId}" executed successfully.`,
+          sender: 'assistant',
+          timestamp: new Date(),
+          type: 'text'
+        };
+        setMessages(prev => [...prev, genericMessage]);
+        break;
+    }
+  }, []);
+
   // Get set of pinned message IDs for the chat interface
   const pinnedMessageIds = new Set(pinnedVisualizations.map(p => p.messageId));
 
@@ -243,6 +347,7 @@ function App() {
             activeTabId={activeVisualizationTab}
             onTabSelect={handleTabSelect}
             onTabClose={handleTabClose}
+            onActionClick={handleInteractiveAction}
           />
         </div>
       </div>

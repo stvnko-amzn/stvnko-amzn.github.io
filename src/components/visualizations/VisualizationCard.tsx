@@ -1,6 +1,6 @@
 import React from 'react';
 import { VisualizationData } from '../../types';
-import { BarChart3, Map, Clock, TrendingUp, Truck, Pin, PinOff, ExternalLink } from 'lucide-react';
+import { BarChart3, Map, Clock, TrendingUp, Truck, Pin, PinOff, ExternalLink, MapPin, Building, Users, Navigation } from 'lucide-react';
 
 interface VisualizationCardProps {
   visualization: VisualizationData;
@@ -23,6 +23,14 @@ const getVisualizationIcon = (type: string) => {
       return Truck;
     case 'logistics-dashboard':
       return TrendingUp;
+    case 'milestone-timeline':
+      return MapPin;
+    case 'fc-inbound-dashboard':
+      return Building;
+    case 'vendor-trending':
+      return Users;
+    case 'real-time-location':
+      return Navigation;
     default:
       return BarChart3;
   }
@@ -40,6 +48,14 @@ const getVisualizationTypeLabel = (type: string) => {
       return 'Trailer Yard';
     case 'logistics-dashboard':
       return 'Logistics Dashboard';
+    case 'milestone-timeline':
+      return 'Milestone Timeline';
+    case 'fc-inbound-dashboard':
+      return 'FC Inbound Dashboard';
+    case 'vendor-trending':
+      return 'Vendor Trending';
+    case 'real-time-location':
+      return 'Real-Time Location';
     default:
       return 'Visualization';
   }
