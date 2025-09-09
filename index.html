@@ -1,19 +1,1847 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ATLAS UX V2 - Supply Chain Intelligence</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script type="module" crossorigin src="/assets/index-69e99500.js"></script>
-    <link rel="stylesheet" href="/assets/index-6eaef45d.css">
-  </head>
-  <body>
-    <div id="root"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerebro - Vendor Research Platform</title>
     
-  </body>
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Typography */
+            --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-serif: "Times New Roman", Times, serif;
+            
+            /* Colors - Based on Figma Design */
+            --color-primary: #000000;
+            --color-secondary: #666666;
+            --color-accent: #ff6b35;
+            --color-background: #ffffff;
+            --color-surface: #f8f8f8;
+            --color-border: #e5e5e5;
+            --color-border-light: #f0f0f0;
+            --color-text-primary: #000000;
+            --color-text-secondary: #666666;
+            --color-text-muted: #999999;
+            --color-success: #00aa00;
+            --color-link: #0066cc;
+            
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            --spacing-xxl: 64px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-background);
+            height: 82px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: var(--spacing-md);
+            cursor: pointer;
+            color: var(--color-text-primary);
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            color: var(--color-text-primary);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+        
+        .header-icon {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            color: var(--color-text-primary);
+        }
+        
+        .sign-in {
+            color: var(--color-text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .sign-in:hover {
+            color: var(--color-text-secondary);
+        }
+        
+        /* Landing Page Styles */
+        .landing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+        }
+        
+        .landing-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .landing-title {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            font-weight: normal;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: 1px;
+        }
+        
+        .landing-subtitle {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+        
+        .tutorial-link {
+            display: block;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            font-size: 14px;
+            color: var(--color-link);
+            text-decoration: none;
+            padding: var(--spacing-sm) 0;
+        }
+        
+        .tutorial-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Search/Upload Input */
+        .main-input-container {
+            max-width: 889px;
+            margin: 0 auto var(--spacing-xl) auto;
+            position: relative;
+        }
+        
+        .main-input {
+            width: 100%;
+            padding: var(--spacing-md) 100px var(--spacing-md) var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+            background: var(--color-background);
+            font-family: var(--font-primary);
+            height: 64px;
+            box-sizing: border-box;
+        }
+        
+        .main-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 1px var(--color-primary);
+        }
+        
+        .main-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .submit-button {
+            position: absolute;
+            right: var(--spacing-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--color-primary);
+            color: var(--color-background);
+            border: none;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            height: 32px;
+        }
+        
+        .submit-button:hover {
+            background: var(--color-secondary);
+            transform: translateY(-50%) scale(1.02);
+        }
+        
+        .submit-button:disabled {
+            background: var(--color-text-muted);
+            cursor: not-allowed;
+            transform: translateY(-50%) scale(1);
+        }
+        
+        /* Recent Questions */
+        .recent-questions {
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+        }
+        
+        .recent-question {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+        
+        .recent-question:hover {
+            background-color: #f8f8f8;
+            margin: 0 -16px;
+            padding: 12px 16px;
+        }
+        
+        .question-icon {
+            margin-right: 12px;
+            color: #666666;
+        }
+        
+        .question-text {
+            color: #000000;
+            font-size: 14px;
+        }
+        
+        /* Categories Section */
+        .categories-section {
+            margin-bottom: 60px;
+        }
+        
+        .categories-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .categories-title {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 24px;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        
+        .categories-subtitle {
+            font-size: 14px;
+            color: #666666;
+            font-style: italic;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .category-card {
+            text-align: center;
+            padding: 24px 16px;
+        }
+        
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        
+        .category-description {
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.4;
+        }
+        
+        /* Today's Mix Section */
+        .todays-mix {
+            background: #f8f8f8;
+            padding: 40px 32px;
+            margin: 60px -32px 0 -32px;
+        }
+        
+        .mix-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .mix-title {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 24px;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        
+        .mix-subtitle {
+            font-size: 14px;
+            color: #666666;
+            font-style: italic;
+        }
+        
+        .mix-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .mix-category {
+            color: #ff6b35;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .mix-quote {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #000000;
+            margin-bottom: 16px;
+        }
+        
+        .mix-attribution {
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        .mix-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cccccc;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-dot.active {
+            background: #000000;
+        }
+        
+        /* Supported Files */
+        .supported-files {
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .supported-title {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 20px;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        
+        .supported-subtitle {
+            font-size: 14px;
+            color: #666666;
+            font-style: italic;
+            margin-bottom: 32px;
+        }
+        
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+        
+        .file-type {
+            text-align: center;
+        }
+        
+        .file-type-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .file-type-description {
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        /* Search Results Layout */
+        .search-layout {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+        
+        /* Filter Panel */
+        .filter-panel {
+            width: 280px;
+            background: #f8f8f8;
+            border-right: 1px solid #e5e5e5;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .filter-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-right: 12px;
+            padding: 4px;
+        }
+        
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .filter-section {
+            margin-bottom: 32px;
+        }
+        
+        .filter-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 12px;
+        }
+        
+        .filter-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .filter-checkbox {
+            margin-right: 8px;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            color: #000000;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+        }
+        
+        .search-results {
+            flex: 1;
+            padding: 24px;
+            max-width: calc(100% - 320px);
+        }
+        
+        .search-query-display {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 32px;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 24px;
+        }
+        
+        .search-summary {
+            font-size: 16px;
+            color: #000000;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .search-summary-additional {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 32px;
+        }
+        
+        /* Audio Clips */
+        .audio-clips {
+            margin-bottom: 32px;
+        }
+        
+        .audio-clips-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 16px;
+        }
+        
+        .audio-controls {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .audio-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #000000;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .audio-button:hover {
+            background: #333333;
+        }
+        
+        /* Anecdotes */
+        .anecdotes {
+            margin-bottom: 32px;
+        }
+        
+        .anecdotes-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 16px;
+        }
+        
+        .anecdote {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid #ff6b35;
+        }
+        
+        .anecdote-text {
+            font-size: 16px;
+            color: #000000;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .anecdote-source {
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        /* Bottom Search */
+        .bottom-search {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e5e5;
+        }
+        
+        .bottom-search-input {
+            width: 100%;
+            padding: 16px 80px 16px 20px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            font-size: 16px;
+            position: relative;
+        }
+        
+        /* Sources Panel */
+        .sources-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e5e5e5;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .sources-header {
+            margin-bottom: 24px;
+        }
+        
+        .sources-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .relevance-link {
+            font-size: 12px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .source-card {
+            background: #f8f8f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .source-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        
+        .source-description {
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .source-relevance {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #000000;
+        }
+        
+        .relevance-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00aa00;
+            margin-right: 6px;
+        }
+        
+        .show-all-sources {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+        
+        .show-all-sources:hover {
+            background: #f8f8f8;
+        }
+        
+        /* Upload Results */
+        .upload-layout {
+            padding: 24px 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .upload-files-display {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+        
+        .file-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        
+        .file-icon-image {
+            width: 32px;
+            height: 32px;
+            background: #cccccc;
+            margin-bottom: 8px;
+        }
+        
+        .file-name {
+            font-size: 12px;
+            color: #000000;
+        }
+        
+        .processing-message {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .processing-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ff6b35;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .processing-text {
+            font-size: 16px;
+            color: #000000;
+        }
+        
+        /* Synthesis Table */
+        .synthesis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 32px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .synthesis-table th {
+            background: #f8f8f8;
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .synthesis-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #000000;
+        }
+        
+        .synthesis-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .editable-cell {
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 8px;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .category-orders { background: #ffa500; }
+        .category-shipments { background: #32cd32; }
+        .category-payments { background: #4169e1; }
+        .category-invoices { background: #9370db; }
+        .category-analytics { background: #ff6347; }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        
+        .action-button {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+        }
+        
+        .action-button.primary {
+            background: #000000;
+            color: white;
+        }
+        
+        .action-button.primary:hover {
+            background: #333333;
+        }
+        
+        .action-button.secondary {
+            background: white;
+            color: #000000;
+            border: 1px solid #d0d0d0;
+        }
+        
+        .action-button.secondary:hover {
+            background: #f8f8f8;
+        }
+        
+        /* Drag and Drop */
+        .drop-zone {
+            border: 2px dashed #d0d0d0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #000000;
+            background: #f8f8f8;
+        }
+        
+        .drop-zone-text {
+            font-size: 16px;
+            color: #666666;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-layout {
+                flex-direction: column;
+            }
+            
+            .filter-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e5e5e5;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sources-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e5e5e5;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .file-types {
+                flex-direction: column;
+                gap: 24px;
+            }
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--spacing-md);
+        }
+        
+        .modal-content {
+            background: var(--color-background);
+            border-radius: var(--radius-lg);
+            max-width: 800px;
+            max-height: 90vh;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .modal-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            padding: 4px;
+        }
+        
+        .modal-close:hover {
+            color: var(--color-text-primary);
+        }
+        
+        .modal-body {
+            padding: var(--spacing-md);
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+        }
+        
+        .source-detail {
+            line-height: 1.6;
+        }
+        
+        .source-detail h3 {
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .source-detail p {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .highlighted-text {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .clickable:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // Static Mock Data - Embedded directly in the frontend
+        const mockCategories = [
+            { 
+                name: "ORDERS", 
+                description: "Order management and fulfillment insights",
+                details: "Comprehensive analysis of vendor experiences with Amazon's ordering system, including forecasting challenges, confirmation rates, and inventory management issues.",
+                stats: { sources: 45, insights: 127 }
+            },
+            { 
+                name: "SHIPPING & LOGISTICS", 
+                description: "Supply chain and delivery optimization",
+                details: "Vendor feedback on shipping requirements, OTIF performance, logistics costs, and delivery network challenges.",
+                stats: { sources: 32, insights: 89 }
+            },
+            { 
+                name: "INVOICES", 
+                description: "Payment and billing processes",
+                details: "Issues and improvements related to invoicing, payment terms, chargebacks, and financial reconciliation processes.",
+                stats: { sources: 28, insights: 76 }
+            },
+            { 
+                name: "SALES & MARKETING", 
+                description: "Promotional and marketing strategies",
+                details: "Vendor perspectives on advertising, promotional opportunities, brand representation, and marketing support.",
+                stats: { sources: 38, insights: 102 }
+            },
+            { 
+                name: "ANALYTICS & REPORTING", 
+                description: "Data insights and performance metrics",
+                details: "Feedback on reporting tools, data availability, performance metrics, and business intelligence capabilities.",
+                stats: { sources: 25, insights: 67 }
+            }
+        ];
+        
+        const mockFileTypes = [
+            { name: "TRANSCRIPTS", description: "Interview and meeting transcripts" },
+            { name: "VIDEO RECORDINGS", description: "Recorded sessions and presentations" },
+            { name: "AUDIO RECORDINGS", description: "Voice interviews and calls" },
+            { name: "QUIP DOCUMENTS", description: "Collaborative documents and notes" },
+            { name: "WORD DOCUMENTS", description: "Reports and written feedback" }
+        ];
+        
+        const mockRecentQuestions = [
+            "What are the top issues with order fulfillment?",
+            "How do vendors feel about OTIF chargebacks?",
+            "What improvements do vendors want to see with FLEX?"
+        ];
+        
+        const mockTodaysMix = {
+            category: "DEMAND PLANNING",
+            quote: "Right now there is no data from Amazon that can help us root cause SoROOS. The first thing we can do and the data we have available is inventory and confirmation rate. But everything else is based on emails and communications asking CSMs or assumptions based on what we know.",
+            author: "Flavio Barros, Supply Chain Manager, P&G"
+        };
+        
+        const mockVendors = [
+            { id: 1, name: "TechCorp Electronics", size: "Enterprise", category: "Electronics", region: "North America" },
+            { id: 2, name: "Fashion Forward Inc", size: "Large", category: "Apparel", region: "Europe" },
+            { id: 3, name: "Garden Supplies Co", size: "Medium", category: "Home & Garden", region: "North America" },
+            { id: 4, name: "BookWorld Publishers", size: "Small", category: "Books & Media", region: "Global" },
+            { id: 5, name: "HealthFirst Beauty", size: "Medium", category: "Health & Beauty", region: "Asia Pacific" }
+        ];
+
+        const mockDocuments = [
+            {
+                id: 1,
+                title: "Q4 2024 Vendor Satisfaction Survey",
+                type: "Survey",
+                uploadDate: "2024-12-15",
+                vendor: "Multiple",
+                status: "Processed",
+                insights: 15,
+                summary: "Comprehensive survey covering 200+ vendors across all categories, focusing on platform usability and support quality."
+            },
+            {
+                id: 2,
+                title: "Enterprise Onboarding Interview Transcripts",
+                type: "Interview",
+                uploadDate: "2024-12-10",
+                vendor: "TechCorp Electronics",
+                status: "Processed",
+                insights: 8,
+                summary: "In-depth interviews with enterprise vendors about their onboarding experience and integration challenges."
+            },
+            {
+                id: 3,
+                title: "API Integration Feedback Forms",
+                type: "Feedback",
+                uploadDate: "2024-12-08",
+                vendor: "Multiple",
+                status: "Processing",
+                insights: 12,
+                summary: "Technical feedback from developers at various vendor organizations regarding API documentation and functionality."
+            }
+        ];
+
+        const mockInsights = [
+            {
+                id: 1,
+                content: "Top vendors report 40% reduction in onboarding time after ASN automation improvements, with particular benefits seen in electronics and apparel categories.",
+                vendor: "Electronics Vendor Group",
+                category: "Onboarding",
+                sentiment: "positive",
+                confidence: 0.92,
+                source: "Q4 2024 Vendor Survey",
+                tags: ["ASN", "Automation", "Onboarding", "Electronics"],
+                extractedDate: "2024-12-15",
+                businessProcess: "Onboarding",
+                vendorSize: "Enterprise"
+            },
+            {
+                id: 2,
+                content: "Major pain point identified in inventory reconciliation process - vendors spending 15+ hours weekly on manual data entry due to API limitations.",
+                vendor: "Home & Garden Suppliers",
+                category: "Inventory Management",
+                sentiment: "negative",
+                confidence: 0.87,
+                source: "Vendor Interview Transcript #47",
+                tags: ["Inventory", "API", "Manual Process", "Pain Point"],
+                extractedDate: "2024-12-12",
+                businessProcess: "Inventory Management",
+                vendorSize: "Medium"
+            },
+            {
+                id: 3,
+                content: "Small to medium vendors express high satisfaction with new return processing workflow, citing 60% faster resolution times.",
+                vendor: "SMB Vendor Coalition",
+                category: "Returns",
+                sentiment: "positive",
+                confidence: 0.94,
+                source: "Returns Process Feedback Form",
+                tags: ["Returns", "SMB", "Workflow", "Satisfaction"],
+                extractedDate: "2024-12-10",
+                businessProcess: "Returns",
+                vendorSize: "Small"
+            },
+            {
+                id: 4,
+                content: "Enterprise vendors request enhanced bulk upload capabilities for product catalogs, current 1000-item limit causing operational bottlenecks.",
+                vendor: "Enterprise Partners",
+                category: "Product Management",
+                sentiment: "neutral",
+                confidence: 0.89,
+                source: "Enterprise Advisory Board Meeting",
+                tags: ["Bulk Upload", "Enterprise", "Product Catalog", "Limits"],
+                extractedDate: "2024-12-08",
+                businessProcess: "Product Management",
+                vendorSize: "Enterprise"
+            },
+            {
+                id: 5,
+                content: "API rate limiting causing significant delays for high-volume vendors during peak hours, with some experiencing 30+ second response times.",
+                vendor: "High Volume Retailers",
+                category: "API Integration",
+                sentiment: "negative",
+                confidence: 0.91,
+                source: "Technical Performance Report",
+                tags: ["API", "Rate Limiting", "Performance", "High Volume"],
+                extractedDate: "2024-12-07",
+                businessProcess: "API Integration",
+                vendorSize: "Enterprise"
+            },
+            {
+                id: 6,
+                content: "New vendor portal dashboard receives positive feedback for improved navigation and real-time status updates.",
+                vendor: "Mixed Vendor Feedback",
+                category: "User Experience",
+                sentiment: "positive",
+                confidence: 0.88,
+                source: "Portal Usability Study",
+                tags: ["Portal", "Dashboard", "Navigation", "UX"],
+                extractedDate: "2024-12-05",
+                businessProcess: "Support",
+                vendorSize: "Mixed"
+            }
+        ];
+
+        const mockSources = [
+            {
+                id: 1,
+                name: "P&G Supply Chain Interview - Audio",
+                description: "Comprehensive interview with P&G supply chain managers discussing order forecasting challenges and inventory management issues.",
+                relevance: "High",
+                type: "audio"
+            },
+            {
+                id: 2,
+                name: "Vendor Survey Results - Document",
+                description: "Quarterly survey results from 150+ vendors covering satisfaction, pain points, and improvement suggestions across all business areas.",
+                relevance: "High",
+                type: "document"
+            }
+        ];
+
+        const mockAnecdotes = [
+            {
+                id: 1,
+                text: "Right now there is no data from Amazon that can help us root cause SoROOS. The first thing we can do and the data we have available is inventory and confirmation rate. But everything else is based on emails and communications asking CSMs or assumptions based on what we know.",
+                source: "Procter & Gamble",
+                category: "Orders"
+            },
+            {
+                id: 2,
+                text: "The forecasting accuracy has improved, but we still see significant variations that impact our inventory planning. We need more granular data to make better decisions.",
+                source: "Unilever",
+                category: "Analytics"
+            }
+        ];
+
+        // Static API Functions - Replace server calls with local data processing
+        const staticAPI = {
+            getStats: () => {
+                return Promise.resolve({
+                    totalDocuments: mockDocuments.length,
+                    totalInsights: mockInsights.length,
+                    activeVendors: mockVendors.length,
+                    recentUploads: mockDocuments.filter(doc => 
+                        new Date(doc.uploadDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                    ).length
+                });
+            },
+
+            getRecentInsights: () => {
+                const recentInsights = mockInsights
+                    .sort((a, b) => new Date(b.extractedDate) - new Date(a.extractedDate))
+                    .slice(0, 5);
+                return Promise.resolve(recentInsights);
+            },
+
+            search: (query, filters) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        let results = [];
+                        
+                        if (query && query.toLowerCase().includes('asn')) {
+                            results.push({
+                                id: 1,
+                                title: "ASN Submission Process Pain Points",
+                                content: "Analysis of vendor feedback reveals three primary pain points in the ASN submission process: 1) Complex validation rules that vary by product category, 2) Limited error messaging that doesn't clearly indicate required corrections, and 3) Lack of bulk submission capabilities for high-volume vendors. These issues particularly affect electronics and apparel vendors who process 500+ ASNs monthly.",
+                                sources: [
+                                    { name: "Vendor Survey Q4 2024", url: "#" },
+                                    { name: "ASN Process Interview Transcripts", url: "#" },
+                                    { name: "Support Ticket Analysis", url: "#" }
+                                ],
+                                confidence: 0.91,
+                                relatedInsights: mockInsights.filter(i => i.tags.includes('ASN')).slice(0, 3)
+                            });
+                        }
+                        
+                        if (query && query.toLowerCase().includes('onboarding')) {
+                            results.push({
+                                id: 2,
+                                title: "Top Vendor Onboarding Challenges",
+                                content: "Enterprise vendors consistently report that the initial setup process takes 3-4 weeks longer than expected, primarily due to API integration complexity and documentation gaps. Key improvement areas include: streamlined authentication setup, better code examples, and dedicated technical support during integration phase.",
+                                sources: [
+                                    { name: "Enterprise Onboarding Feedback", url: "#" },
+                                    { name: "Technical Integration Surveys", url: "#" }
+                                ],
+                                confidence: 0.88,
+                                relatedInsights: mockInsights.filter(i => i.tags.includes('Onboarding')).slice(0, 3)
+                            });
+                        }
+                        
+                        if (query && query.toLowerCase().includes('api')) {
+                            results.push({
+                                id: 3,
+                                title: "API Integration Pain Points and Improvements",
+                                content: "Vendors report several API-related challenges: rate limiting during peak hours, insufficient error messaging, and complex authentication flows. However, recent improvements to documentation and SDK availability have received positive feedback from 78% of surveyed vendors.",
+                                sources: [
+                                    { name: "API Integration Feedback Forms", url: "#" },
+                                    { name: "Technical Performance Report", url: "#" }
+                                ],
+                                confidence: 0.89,
+                                relatedInsights: mockInsights.filter(i => i.tags.includes('API')).slice(0, 3)
+                            });
+                        }
+                        
+                        // If no specific matches, return general results
+                        if (results.length === 0) {
+                            results = [
+                                {
+                                    id: 4,
+                                    title: "General Vendor Feedback Trends",
+                                    content: "Recent analysis shows improving vendor satisfaction across most categories, with particular gains in support responsiveness and platform stability. Key areas for continued focus include API performance optimization and onboarding process streamlining.",
+                                    sources: [
+                                        { name: "Q4 2024 Vendor Survey", url: "#" },
+                                        { name: "Monthly Satisfaction Tracking", url: "#" }
+                                    ],
+                                    confidence: 0.85,
+                                    relatedInsights: mockInsights.slice(0, 3)
+                                }
+                            ];
+                        }
+                        
+                        resolve({
+                            query,
+                            results,
+                            totalResults: results.length,
+                            searchTime: Math.random() * 1000 + 500
+                        });
+                    }, 1000 + Math.random() * 1000);
+                });
+            },
+
+            browseInsights: (filters, query) => {
+                let filteredInsights = [...mockInsights];
+                
+                // Apply filters
+                if (filters.sentiment && filters.sentiment.length > 0) {
+                    filteredInsights = filteredInsights.filter(insight =>
+                        filters.sentiment.some(s => s.toLowerCase() === insight.sentiment)
+                    );
+                }
+                
+                if (filters.businessProcess && filters.businessProcess.length > 0) {
+                    filteredInsights = filteredInsights.filter(insight =>
+                        filters.businessProcess.includes(insight.businessProcess)
+                    );
+                }
+                
+                if (filters.vendorSize && filters.vendorSize.length > 0) {
+                    filteredInsights = filteredInsights.filter(insight =>
+                        filters.vendorSize.some(size => insight.vendorSize.includes(size.split(' ')[0]))
+                    );
+                }
+                
+                if (filters.category && filters.category.length > 0) {
+                    filteredInsights = filteredInsights.filter(insight =>
+                        filters.category.some(cat => insight.tags.some(tag => 
+                            tag.toLowerCase().includes(cat.toLowerCase()) || 
+                            insight.category.toLowerCase().includes(cat.toLowerCase())
+                        ))
+                    );
+                }
+                
+                // Apply text search within filtered results
+                if (query && query.trim()) {
+                    const searchTerm = query.toLowerCase();
+                    filteredInsights = filteredInsights.filter(insight =>
+                        insight.content.toLowerCase().includes(searchTerm) ||
+                        insight.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                        insight.vendor.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                return Promise.resolve({
+                    insights: filteredInsights,
+                    totalCount: filteredInsights.length,
+                    appliedFilters: filters
+                });
+            },
+
+            uploadFile: (filename, size, type) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const mockProcessedFile = {
+                            id: Date.now(),
+                            name: filename || 'uploaded-document.pdf',
+                            size: size || 1024000,
+                            type: type || 'application/pdf',
+                            uploadDate: new Date().toISOString(),
+                            status: 'processed',
+                            insights: [
+                                "Identified 3 key pain points related to inventory management processes",
+                                "Extracted sentiment analysis showing 72% positive feedback on new features",
+                                "Found 5 actionable recommendations for API improvements",
+                                "Categorized feedback across 4 business process areas",
+                                "Detected trending topics: automation, user experience, integration challenges"
+                            ].slice(0, Math.floor(Math.random() * 3) + 2),
+                            extractedInsights: Math.floor(Math.random() * 10) + 3,
+                            categories: ['Inventory Management', 'User Experience', 'API Integration'],
+                            sentiment: {
+                                positive: Math.floor(Math.random() * 40) + 30,
+                                negative: Math.floor(Math.random() * 30) + 10,
+                                neutral: Math.floor(Math.random() * 40) + 20
+                            }
+                        };
+                        
+                        resolve({
+                            success: true,
+                            file: mockProcessedFile,
+                            message: 'File processed successfully'
+                        });
+                    }, 2000 + Math.random() * 2000);
+                });
+            }
+        };
+
+        // React Components
+        const Header = () => {
+            return (
+                <header className="header">
+                    <div className="header-left">
+                        <div className="menu-icon">☰</div>
+                        <div className="logo">CEREBRO</div>
+                    </div>
+                    <div className="header-right">
+                        <div className="header-icon">🔍</div>
+                        <div className="header-icon">📊</div>
+                        <a href="#" className="sign-in">Sign in</a>
+                    </div>
+                </header>
+            );
+        };
+
+        const LandingPage = ({ onSearch, onUpload }) => {
+            const [query, setQuery] = useState('');
+            const [isDragOver, setIsDragOver] = useState(false);
+            const fileInputRef = useRef(null);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (query.trim()) {
+                    onSearch(query);
+                }
+            };
+
+            const handleQuestionClick = (question) => {
+                setQuery(question);
+                onSearch(question);
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                setIsDragOver(true);
+            };
+
+            const handleDragLeave = (e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length > 0) {
+                    onUpload(files);
+                }
+            };
+
+            const handleFileSelect = (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length > 0) {
+                    onUpload(files);
+                }
+            };
+
+            return (
+                <div className="landing-container">
+                    <div className="landing-header">
+                        <h1 className="landing-title">Vendor Research Platform</h1>
+                        <p className="landing-subtitle">Discover insights from vendor feedback and research</p>
+                    </div>
+
+                    <a href="#" className="tutorial-link">
+                        How to use Cerebro for vendor research →
+                    </a>
+
+                    <form onSubmit={handleSubmit} className="main-input-container">
+                        <input
+                            type="text"
+                            className="main-input"
+                            placeholder="Ask a question about vendor feedback or upload documents for analysis..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                        <button type="submit" className="submit-button" disabled={!query.trim()}>
+                            Search
+                        </button>
+                    </form>
+
+                    <div 
+                        className={`drop-zone ${isDragOver ? 'dragover' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <div className="drop-zone-text">
+                            Drop files here or click to upload documents for analysis
+                        </div>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            accept=".pdf,.doc,.docx,.txt,.mp3,.mp4,.wav"
+                            onChange={handleFileSelect}
+                            style={{ display: 'none' }}
+                        />
+                    </div>
+
+                    <div className="recent-questions">
+                        {mockRecentQuestions.map((question, index) => (
+                            <div 
+                                key={index} 
+                                className="recent-question"
+                                onClick={() => handleQuestionClick(question)}
+                            >
+                                <span className="question-icon">💬</span>
+                                <span className="question-text">{question}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="categories-section">
+                        <div className="categories-header">
+                            <h2 className="categories-title">Research Categories</h2>
+                            <p className="categories-subtitle">Explore vendor feedback by business area</p>
+                        </div>
+                        <div className="categories-grid">
+                            {mockCategories.map((category, index) => (
+                                <div key={index} className="category-card clickable">
+                                    <h3 className="category-name">{category.name}</h3>
+                                    <p className="category-description">{category.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="todays-mix">
+                        <div className="mix-header">
+                            <h2 className="mix-title">Today's Insight</h2>
+                            <p className="mix-subtitle">Featured vendor feedback</p>
+                        </div>
+                        <div className="mix-content">
+                            <div className="mix-category">{mockTodaysMix.category}</div>
+                            <div className="mix-quote">"{mockTodaysMix.quote}"</div>
+                            <div className="mix-attribution">— {mockTodaysMix.author}</div>
+                        </div>
+                        <div className="mix-navigation">
+                            <div className="nav-dot active"></div>
+                            <div className="nav-dot"></div>
+                            <div className="nav-dot"></div>
+                        </div>
+                    </div>
+
+                    <div className="supported-files">
+                        <h2 className="supported-title">Supported File Types</h2>
+                        <p className="supported-subtitle">Upload various document formats for analysis</p>
+                        <div className="file-types">
+                            {mockFileTypes.map((fileType, index) => (
+                                <div key={index} className="file-type">
+                                    <div className="file-type-name">{fileType.name}</div>
+                                    <div className="file-type-description">{fileType.description}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SearchResults = ({ searchData, onBackToHome, onNewSearch }) => {
+            const [newQuery, setNewQuery] = useState('');
+            const [selectedSource, setSelectedSource] = useState(null);
+
+            const handleNewSearch = (e) => {
+                e.preventDefault();
+                if (newQuery.trim()) {
+                    onNewSearch(newQuery);
+                    setNewQuery('');
+                }
+            };
+
+            return (
+                <div className="search-layout">
+                    <div className="filter-panel">
+                        <div className="filter-header">
+                            <button className="back-button" onClick={onBackToHome}>
+                                ←
+                            </button>
+                            <div className="filter-title">Filters</div>
+                        </div>
+                        
+                        <div className="filter-section">
+                            <div className="filter-section-title">Business Process</div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Onboarding</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Inventory Management</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">API Integration</label>
+                            </div>
+                        </div>
+
+                        <div className="filter-section">
+                            <div className="filter-section-title">Vendor Size</div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Enterprise</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Medium</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Small</label>
+                            </div>
+                        </div>
+
+                        <div className="filter-section">
+                            <div className="filter-section-title">Sentiment</div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Positive</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Negative</label>
+                            </div>
+                            <div className="filter-option">
+                                <input type="checkbox" className="filter-checkbox" />
+                                <label className="filter-label">Neutral</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="main-content">
+                        <div className="search-results">
+                            <h1 className="search-query-display">{searchData.query}</h1>
+                            
+                            {searchData.results.map((result) => (
+                                <div key={result.id}>
+                                    <div className="search-summary">
+                                        <strong>{result.title}</strong>
+                                    </div>
+                                    <div className="search-summary-additional">
+                                        {result.content}
+                                    </div>
+
+                                    <div className="anecdotes">
+                                        <h3 className="anecdotes-title">Related Insights</h3>
+                                        {result.relatedInsights?.map((insight) => (
+                                            <div key={insight.id} className="anecdote">
+                                                <div className="anecdote-text">{insight.content}</div>
+                                                <div className="anecdote-source">{insight.vendor} - {insight.source}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div className="bottom-search">
+                                <form onSubmit={handleNewSearch}>
+                                    <input
+                                        type="text"
+                                        className="bottom-search-input"
+                                        placeholder="Ask a follow-up question..."
+                                        value={newQuery}
+                                        onChange={(e) => setNewQuery(e.target.value)}
+                                    />
+                                </form>
+                            </div>
+                        </div>
+
+                        <div className="sources-panel">
+                            <div className="sources-header">
+                                <div className="sources-title">Sources</div>
+                                <a href="#" className="relevance-link">How is relevance determined?</a>
+                            </div>
+                            
+                            {mockSources.map((source) => (
+                                <div key={source.id} className="source-card clickable" onClick={() => setSelectedSource(source)}>
+                                    <div className="source-name">{source.name}</div>
+                                    <div className="source-description">{source.description}</div>
+                                    <div className="source-relevance">
+                                        <div className="relevance-icon"></div>
+                                        {source.relevance} relevance
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            <button className="show-all-sources">Show all sources</button>
+                        </div>
+                    </div>
+
+                    {selectedSource && (
+                        <div className="modal-overlay" onClick={() => setSelectedSource(null)}>
+                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <div className="modal-title">{selectedSource.name}</div>
+                                    <button className="modal-close" onClick={() => setSelectedSource(null)}>×</button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="source-detail">
+                                        <h3>Source Details</h3>
+                                        <p>{selectedSource.description}</p>
+                                        <p><strong>Relevance:</strong> {selectedSource.relevance}</p>
+                                        <p><strong>Type:</strong> {selectedSource.type}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const UploadResults = ({ uploadedFiles, onBackToHome }) => {
+            const [isProcessing, setIsProcessing] = useState(true);
+            const [processedData, setProcessedData] = useState(null);
+
+            useEffect(() => {
+                // Simulate processing
+                const timer = setTimeout(() => {
+                    setIsProcessing(false);
+                    setProcessedData({
+                        insights: [
+                            "Identified 5 key pain points in vendor onboarding process",
+                            "Found 3 positive feedback themes about new API features",
+                            "Extracted 8 actionable recommendations for improvement",
+                            "Categorized feedback across 4 business process areas"
+                        ],
+                        categories: ['Onboarding', 'API Integration', 'User Experience', 'Support'],
+                        sentiment: { positive: 65, negative: 20, neutral: 15 }
+                    });
+                }, 3000);
+
+                return () => clearTimeout(timer);
+            }, []);
+
+            return (
+                <div className="upload-layout">
+                    <button className="back-button" onClick={onBackToHome} style={{ marginBottom: '24px' }}>
+                        ← Back to Home
+                    </button>
+
+                    <div className="upload-files-display">
+                        {uploadedFiles.map((file, index) => (
+                            <div key={index} className="file-icon">
+                                <div className="file-icon-image"></div>
+                                <div className="file-name">{file.name}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {isProcessing ? (
+                        <div className="processing-message">
+                            <div className="processing-icon"></div>
+                            <div className="processing-text">Processing documents and extracting insights...</div>
+                        </div>
+                    ) : (
+                        <div>
+                            <h2>Analysis Complete</h2>
+                            <div className="synthesis-table">
+                                <table style={{ width: '100%' }}>
+                                    <thead>
+                                        <tr>
+                                            <th>Insight</th>
+                                            <th>Category</th>
+                                            <th>Confidence</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {processedData.insights.map((insight, index) => (
+                                            <tr key={index}>
+                                                <td>{insight}</td>
+                                                <td>
+                                                    <span className="category-badge category-orders">
+                                                        {processedData.categories[index % processedData.categories.length]}
+                                                    </span>
+                                                </td>
+                                                <td>{Math.floor(Math.random() * 20) + 80}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="action-buttons">
+                                <button className="action-button primary">Export Results</button>
+                                <button className="action-button secondary">Analyze More Files</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [currentView, setCurrentView] = useState('landing');
+            const [searchData, setSearchData] = useState(null);
+            const [uploadedFiles, setUploadedFiles] = useState([]);
+            const [isLoading, setIsLoading] = useState(false);
+
+            const handleSearch = async (query) => {
+                setIsLoading(true);
+                try {
+                    const results = await staticAPI.search(query, {});
+                    setSearchData(results);
+                    setCurrentView('search');
+                } catch (error) {
+                    console.error('Search error:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const handleUpload = (files) => {
+                setUploadedFiles(files);
+                setCurrentView('upload');
+            };
+
+            const handleBackToHome = () => {
+                setCurrentView('landing');
+                setSearchData(null);
+                setUploadedFiles([]);
+            };
+
+            const handleNewSearch = (query) => {
+                handleSearch(query);
+            };
+
+            return (
+                <div className={isLoading ? 'loading' : ''}>
+                    <Header />
+                    {currentView === 'landing' && (
+                        <LandingPage onSearch={handleSearch} onUpload={handleUpload} />
+                    )}
+                    {currentView === 'search' && searchData && (
+                        <SearchResults 
+                            searchData={searchData} 
+                            onBackToHome={handleBackToHome}
+                            onNewSearch={handleNewSearch}
+                        />
+                    )}
+                    {currentView === 'upload' && uploadedFiles.length > 0 && (
+                        <UploadResults 
+                            uploadedFiles={uploadedFiles} 
+                            onBackToHome={handleBackToHome}
+                        />
+                    )}
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
 </html>
