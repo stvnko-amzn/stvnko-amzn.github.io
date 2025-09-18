@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/scpc-experiment-2/static/css/main.e3a36d39.css",
+    "main.js": "/scpc-experiment-2/static/js/main.09eb76b6.js",
+    "static/js/453.3f6a434c.chunk.js": "/scpc-experiment-2/static/js/453.3f6a434c.chunk.js",
+    "index.html": "/scpc-experiment-2/index.html",
+    "main.e3a36d39.css.map": "/scpc-experiment-2/static/css/main.e3a36d39.css.map",
+    "main.09eb76b6.js.map": "/scpc-experiment-2/static/js/main.09eb76b6.js.map",
+    "453.3f6a434c.chunk.js.map": "/scpc-experiment-2/static/js/453.3f6a434c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e3a36d39.css",
+    "static/js/main.09eb76b6.js"
+  ]
+}
