@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/order-data-quality/static/css/main.c7b05790.css",
+    "main.js": "/order-data-quality/static/js/main.f0a32519.js",
+    "index.html": "/order-data-quality/index.html",
+    "main.c7b05790.css.map": "/order-data-quality/static/css/main.c7b05790.css.map",
+    "main.f0a32519.js.map": "/order-data-quality/static/js/main.f0a32519.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c7b05790.css",
+    "static/js/main.f0a32519.js"
+  ]
+}
